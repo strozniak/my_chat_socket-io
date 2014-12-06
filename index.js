@@ -38,6 +38,10 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('user action', socket.nick + ' disconnected');
     });
 
+    socket.on('writing', function() {
+        socket.broadcast.emit('writing', socket.nick);
+    });
+
 });
 
 var port = app.get('port');
