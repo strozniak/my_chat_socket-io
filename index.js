@@ -1,12 +1,16 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var express = require('express');
+
 
 var userIdx = 0;
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
+
+app.use(express.static(__dirname + '/public'));
 
 app.set('port', (process.env.PORT || 3000));
 
@@ -31,7 +35,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function() {
-        socket.broadcast.emit('user action', 'user disconnected');
+        socket.broadcast.emit('user action', socket.nick + ' disconnected');
     });
 
 });
@@ -39,7 +43,7 @@ io.on('connection', function(socket) {
 var port = app.get('port');
 
 http.listen(port, function() {
-    console.log('listening on new *:'+port);
+    console.log('listening on new *:' + port);
 });
 
 
