@@ -8,6 +8,8 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.set('port', (process.env.PORT || 3000));
+
 io.on('connection', function(socket) {
 
     if (socket.nick === undefined) {
@@ -34,7 +36,7 @@ io.on('connection', function(socket) {
 
 });
 
-var port = app.get('port') || 5000;
+var port = app.get('port');
 
 http.listen(port, function() {
     console.log('listening on new *:'+port);
