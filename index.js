@@ -30,7 +30,7 @@ io.on('connection', function(socket) {
             socket.nick = getNick(msg);
             io.emit('user action', 'user ' + oldNick + ' changed his nick to ' + socket.nick);
         } else {
-            io.emit('chat message', socket.nick + "> " + msg);
+            socket.broadcast.emit('chat message', socket.nick + "> " + msg);
         }
     });
 
