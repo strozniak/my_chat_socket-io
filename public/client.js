@@ -3,6 +3,13 @@ $('form').submit(function() {
     var inputMessage = $('#m').val();
     if (isChangeNickCommand(inputMessage)) {
         socket.emit('nick change', inputMessage);
+    } else if(isSendPrivateMsgCommand(inputMessage)) {
+        socket.emit('private message', inputMessage);
+        var reciver = parseReciver(inputMessage);
+        var parsedMessage = inputMessage.replace('/priv '+reciver+' ','');
+        var $element = $('<li class="my-message">').text('whispers to '+reciver+'> ' + parsedMessage);
+        $('#messages').append($element);
+        scrollPageDown($element);
     } else {
         socket.emit('chat message', inputMessage);
         var $element = $('<li class="my-message">').text('me> ' + inputMessage);
@@ -51,6 +58,15 @@ var isChangeNickCommand = function(text) {
     return splittedMsg[0] === "/nick";
 }
 
+var isSendPrivateMsgCommand = function(text) {
+    var splittedMsg = text.split(" ");
+    return splittedMsg[0] === "/priv";
+}
+
 var scrollPageDown = function(element) {
     $('body, html').animate({ scrollTop: element.offset().top }, 1000);
+}
+
+var parseReciver = function(inputMessage) {
+    return inputMessage.split(' ')[1];
 }
