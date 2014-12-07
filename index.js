@@ -16,22 +16,19 @@ app.set('port', (process.env.PORT || 3000));
 
 io.on('connection', function(socket) {
 
-    if (socket.nick === undefined) {
-        socket.nick = 'anonymous' + userIdx;
-        userIdx++;
-    }
+    socket.nick = 'anonymous' + userIdx;
+    userIdx++;
 
     socket.broadcast.emit('user action', 'user ' + socket.nick + ' connected');
 
     socket.on('chat message', function(msg) {
+        socket.broadcast.emit('chat message', socket.nick + "> " + msg);
+    });
 
-        if (isChangeNickMsg(msg)) {
-            var oldNick = socket.nick;
-            socket.nick = getNick(msg);
-            io.emit('user action', 'user ' + oldNick + ' changed his nick to ' + socket.nick);
-        } else {
-            socket.broadcast.emit('chat message', socket.nick + "> " + msg);
-        }
+    socket.on('nick change', function(msg) {
+        var oldNick = socket.nick;
+        socket.nick = getNick(msg);
+        io.emit('user action', 'user ' + oldNick + ' changed his nick to ' + socket.nick);
     });
 
     socket.on('disconnect', function() {
@@ -49,12 +46,6 @@ var port = app.get('port');
 http.listen(port, function() {
     console.log('listening on new *:' + port);
 });
-
-
-var isChangeNickMsg = function(msg) {
-    var splittedMsg = msg.split(" ");
-    return splittedMsg[0] === "/nick";
-}
 
 var getNick = function(msg) {
     var splittedMsg = msg.split(" ");

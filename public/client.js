@@ -1,8 +1,12 @@
 var socket = io();
 $('form').submit(function() {
     var inputMessage = $('#m').val();
-    socket.emit('chat message', inputMessage);
-    $('#messages').append($('<li class="my-message">').text('me> ' + inputMessage));
+    if (isChangeNickCommand(inputMessage)) {
+        socket.emit('nick change', inputMessage);
+    } else {
+        socket.emit('chat message', inputMessage);
+        $('#messages').append($('<li class="my-message">').text('me> ' + inputMessage));
+    }
     $('#m').val('');
     return false;
 });
@@ -27,3 +31,8 @@ socket.on('writing', function(user) {
 $('#m').on('input', function() {
     socket.emit('writing');
 });
+
+var isChangeNickCommand = function(text) {
+    var splittedMsg = text.split(" ");
+    return splittedMsg[0] === "/nick";
+}
