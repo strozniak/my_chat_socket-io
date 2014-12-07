@@ -5,25 +5,33 @@ $('form').submit(function() {
         socket.emit('nick change', inputMessage);
     } else {
         socket.emit('chat message', inputMessage);
-        $('#messages').append($('<li class="my-message">').text('me> ' + inputMessage));
+        var $element = $('<li class="my-message">').text('me> ' + inputMessage);
+        $('#messages').append($element);
+        scrollPageDown($element);
     }
     $('#m').val('');
     return false;
 });
 socket.on('chat message', function(msg) {
     $('#is-typing').remove();
-    $('#messages').append($('<li>').text(msg));
+    var $element = $('<li>').text(msg);
+    $('#messages').append($element);
+    scrollPageDown($element);
 });
 socket.on('user action', function(msg) {
     $('#is-typing').remove();
-    $('#messages').append($('<li class="user-action">').text(msg));
+    var $element = $('<li class="user-action">').text(msg);
+    $('#messages').append($element);
+    scrollPageDown($element);
 });
 socket.on('writing', function(user) {
     if ($('#is-typing').size() === 0) {
-        $('#messages').append($('<li id="is-typing">').text(user + ' is typing'));
+        var $element = $('<li id="is-typing">').text(user + ' is typing');
+        $('#messages').append($element);
         setTimeout(function() {
             $('#is-typing').remove();
         }, 1000);
+        scrollPageDown($element);
     }
 });
 socket.on('online users', function(onlineUsers) {
@@ -41,4 +49,8 @@ $('#m').on('input', function() {
 var isChangeNickCommand = function(text) {
     var splittedMsg = text.split(" ");
     return splittedMsg[0] === "/nick";
+}
+
+var scrollPageDown = function(element) {
+    $('body, html').animate({ scrollTop: element.offset().top }, 1000);
 }
