@@ -24,9 +24,15 @@ socket.on('writing', function(user) {
         setTimeout(function() {
             $('#is-typing').remove();
         }, 1000);
-
     }
 });
+socket.on('online users', function(onlineUsers) {
+    $('#online-users li').remove();
+    for (var idx in onlineUsers) {
+        $('#online-users').append($('<li>').text(onlineUsers[idx]));
+    }
+});
+
 
 $('#m').on('input', function() {
     socket.emit('writing');
